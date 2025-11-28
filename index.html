@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Deposit (FD) Calculator</title>
+    <style>
+        /* CSS for basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calculator-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Important for padding not to exceed width */
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e9f7ff;
+            border: 1px solid #cceeff;
+            border-radius: 5px;
+        }
+
+        .result-box p {
+            margin: 5px 0;
+            font-size: 1.1em;
+            color: #007bff;
+        }
+
+        .result-box strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h2>💰 Fixed Deposit Calculator</h2>
+        
+        <div class="input-group">
+            <label for="principal">Principal Amount (₹)</label>
+            <input type="number" id="principal" value="50000" min="1" required>
+        </div>
+
+        <div class="input-group">
+            <label for="rate">Annual Interest Rate (%)</label>
+            <input type="number" id="rate" value="7.5" step="0.1" min="0.01" required>
+        </div>
+
+        <div class="input-group">
+            <label for="years">Time Period (Years)</label>
+            <input type="number" id="years" value="5" min="0.01" required>
+        </div>
+
+        <div class="input-group">
+            <label for="compounding">Compounding Frequency</label>
+            <select id="compounding">
+                <option value="1">Annually (1)</option>
+                <option value="2">Half-Yearly (2)</option>
+                <option value="4" selected>Quarterly (4)</option>
+                <option value="12">Monthly (12)</option>
+            </select>
+        </div>
+        
+        <button onclick="calculateFD()">Calculate</button>
+
+        <div class="result-box">
+            <p>Maturity Amount: <strong id="maturityAmount">₹ 0.00</strong></p>
+            <p>Total Interest Earned: <strong id="totalInterest">₹ 0.00</strong></p>
+        </div>
+    </div>
+
+    <script>
+        /* JavaScript for calculation logic */
+        function calculateFD() {
+            // Get values from input fields
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value);
+            const years = parseFloat(document.getElementById('years').value);
+            const compoundingFrequency = parseInt(document.getElementById('compounding').value);
+
+            // Basic validation
+            if (isNaN(principal) || isNaN(rate) || isNaN(years) || principal <= 0 || rate <= 0 || years <= 0) {
+                alert("Please enter valid positive numbers for all fields.");
+                return;
+            }
+
+            // Convert annual rate percentage to decimal
+            const r = rate / 100;
+            
+            // Number of times interest is compounded per year (n)
+            const n = compoundingFrequency;
+
+            // Total number of periods (t * n)
+            const t = years;
+            const totalPeriods = t * n;
+
+            // The FD formula (Compound Interest Formula): A = P * (1 + r/n)^(n*t)
+            // A = Maturity Amount, P = Principal, r = annual interest rate, n = compounding frequency, t = time in years
+            const maturityAmount = principal * Math.pow((1 + (r / n)), totalPeriods);
+
+            // Calculate Total Interest Earned
+            const totalInterest = maturityAmount - principal;
+
+            // Format results to currency (2 decimal places)
+            const formattedMaturity = maturityAmount.toFixed(2);
+            const formattedInterest = totalInterest.toFixed(2);
+
+            // Display the results
+            document.getElementById('maturityAmount').innerText = '₹ ' + formattedMaturity;
+            document.getElementById('totalInterest').innerText = '₹ ' + formattedInterest;
+        }
+
+        // Run the calculation on page load with default values
+        document.addEventListener('DOMContentLoaded', calculateFD);
+    </script>
+
+</body>
+</html>
